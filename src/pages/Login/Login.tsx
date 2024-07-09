@@ -74,7 +74,7 @@ const Login = () => {
         <TimeSyncForm onSubmit={handleSubmit} defaultValues={defaultValues}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <TimeSyncInput name="email" label="Email" fullWidth />
+              <TimeSyncInput name="email" label="Email address" fullWidth />
             </Grid>
             <Grid item xs={12}>
               <TimeSyncInput
