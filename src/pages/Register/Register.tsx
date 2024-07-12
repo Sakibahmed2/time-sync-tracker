@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import GoogleIcon from "@mui/icons-material/Google";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import {
   Box,
   Button,
@@ -7,14 +11,12 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import TimeSyncForm from "../../components/Forms/TimeSyncForm";
-import { Link } from "react-router-dom";
-import TimeSyncInput from "../../components/Forms/TimeSyncInput";
-import { FieldValues } from "react-hook-form";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { useState } from "react";
-import GoogleIcon from "@mui/icons-material/Google";
+import { FieldValues } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import TimeSyncForm from "../../components/Forms/TimeSyncForm";
+import TimeSyncInput from "../../components/Forms/TimeSyncInput";
+import { toast } from "sonner";
 
 const defaultValues = {
   email: "",
@@ -25,10 +27,36 @@ const defaultValues = {
 const Register = () => {
   const [isShow, setIsShow] = useState(false);
 
-  console.log(isShow);
+  const navigate = useNavigate();
 
   const handleSubmit = async (value: FieldValues) => {
-    console.log(value);
+    const toastId = toast.loading("Creating user....");
+    try {
+      const userInfo = {
+        name: value.name,
+        email: value.email,
+        password: value.password,
+      };
+
+      const postRequestOption = {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(userInfo),
+      };
+
+      fetch(`http://localhost:5000/api/v1/register`, postRequestOption)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            toast.success(data.message, { id: toastId });
+            navigate("/login");
+          }
+        });
+    } catch (err: any) {
+      console.log(err);
+    }
   };
 
   return (
