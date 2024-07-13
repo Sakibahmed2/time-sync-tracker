@@ -1,12 +1,18 @@
-import { Box, Button, Divider, Grid, Stack, Typography } from "@mui/material";
-import TimeSyncForm from "../../components/Forms/TimeSyncForm";
-import { Link } from "react-router-dom";
-import TimeSyncInput from "../../components/Forms/TimeSyncInput";
-import { FieldValues } from "react-hook-form";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
-import { useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import GoogleIcon from "@mui/icons-material/Google";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { Box, Button, Divider, Grid, Stack, Typography } from "@mui/material";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { useState } from "react";
+import { FieldValues } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import TimeSyncForm from "../../components/Forms/TimeSyncForm";
+import TimeSyncInput from "../../components/Forms/TimeSyncInput";
+import app from "../../firebase/firebase.config";
+import { getUserInfo } from "../../services/auth.services";
+import { toast } from "sonner";
+import { setToLocalStorage } from "../../utils/local-storage";
 
 const defaultValues = {
   email: "",
@@ -15,11 +21,67 @@ const defaultValues = {
 
 const Login = () => {
   const [isShow, setIsShow] = useState(false);
+  const auth = getAuth(app);
 
-  console.log(isShow);
+  const navigate = useNavigate();
+
+  const user = getUserInfo();
+
+  console.log(user);
+
+  // const handleSubmit = async (value: FieldValues) => {
+  //   const toastId = toast.loading("Loading....");
+  //   try {
+  //     const userInfo = {
+  //       email: value.email,
+  //       password: value.password,
+  //     };
+
+  //     const postRequestOption = {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-type": "application/json",
+  //       },
+  //       body: JSON.stringify(userInfo),
+  //     };
+
+  //     fetch(`http://localhost:5000/api/v1/login`, postRequestOption)
+  //       .then((res) => res.json())
+  //       .then((data) => {
+  //         console.log(data);
+  //         if (data.success) {
+  //           toast.success(data.message, { id: toastId });
+  //           setToLocalStorage("accessToken", data.token);
+  //         }
+  //       });
+  //   } catch (err: any) {
+  //     console.log(err);
+  //   }
+  // };
 
   const handleSubmit = async (value: FieldValues) => {
-    console.log(value);
+    const email = value.email;
+    const password = value.password;
+
+    const toastId = toast.loading("Loading....");
+    try {
+      signInWithEmailAndPassword(auth, email, password)
+        .then((result) => {
+          const user: any = result.user;
+          user.displayName = value.name;
+          console.log(user);
+          if (user?.accessToken) {
+            toast.success("User login successfully", { id: toastId });
+            setToLocalStorage("accessToken", user?.accessToken);
+            navigate("/login-success");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (err: any) {
+      console.log(err);
+    }
   };
 
   return (

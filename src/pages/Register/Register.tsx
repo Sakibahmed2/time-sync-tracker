@@ -11,12 +11,20 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
 import { useState } from "react";
 import { FieldValues } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { toast } from "sonner";
 import TimeSyncForm from "../../components/Forms/TimeSyncForm";
 import TimeSyncInput from "../../components/Forms/TimeSyncInput";
-import { toast } from "sonner";
+import app from "../../firebase/firebase.config";
+import { setToLocalStorage } from "../../utils/local-storage";
 
 const defaultValues = {
   email: "",
@@ -26,33 +34,74 @@ const defaultValues = {
 
 const Register = () => {
   const [isShow, setIsShow] = useState(false);
+  // const navigate = useNavigate();
 
-  const navigate = useNavigate();
+  // firebase
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  // const handleSubmit = async (value: FieldValues) => {
+  //   const toastId = toast.loading("Creating user....");
+  //   try {
+  //     const userInfo = {
+  //       name: value.name,
+  //       email: value.email,
+  //       password: value.password,
+  //     };
+
+  //     const postRequestOption = {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-type": "application/json",
+  //       },
+  //       body: JSON.stringify(userInfo),
+  //     };
+
+  //     fetch(`http://localhost:5000/api/v1/register`, postRequestOption)
+  //       .then((res) => res.json())
+  //       .then((data) => {
+  //         if (data.success) {
+  //           toast.success(data.message, { id: toastId });
+  //           navigate("/login");
+  //         }
+  //       });
+  //   } catch (err: any) {
+  //     console.log(err);
+  //   }
+  // };
+
+  const handleGoogleSingIn = () => {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        const user: any = result.user;
+        console.log(user?.accessToken);
+        if (user?.accessToken) {
+          setToLocalStorage("accessToken", user?.accessToken);
+        }
+      })
+      .catch((err) => {
+        console.log("error", err);
+      });
+  };
 
   const handleSubmit = async (value: FieldValues) => {
+    const email = value.email;
+    const password = value.password;
+
     const toastId = toast.loading("Creating user....");
     try {
-      const userInfo = {
-        name: value.name,
-        email: value.email,
-        password: value.password,
-      };
-
-      const postRequestOption = {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify(userInfo),
-      };
-
-      fetch(`http://localhost:5000/api/v1/register`, postRequestOption)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success) {
-            toast.success(data.message, { id: toastId });
-            navigate("/login");
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((result) => {
+          const user: any = result.user;
+          user.displayName = value.name;
+          console.log(user);
+          if (user?.accessToken) {
+            toast.success("User created successfully", { id: toastId });
+            setToLocalStorage("accessToken", user?.accessToken);
           }
+        })
+        .catch((error) => {
+          console.log(error);
         });
     } catch (err: any) {
       console.log(err);
@@ -188,7 +237,10 @@ const Register = () => {
               border: "1px solid black",
               borderRadius: 10,
               padding: 2,
+              cursor: "pointer",
             }}
+            component={"div"}
+            onClick={handleGoogleSingIn}
           >
             <GoogleIcon />
           </Box>
