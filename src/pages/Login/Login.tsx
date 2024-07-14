@@ -77,6 +77,7 @@ const Login = () => {
           }
         })
         .catch((error) => {
+          toast.error("User login failed!", { id: toastId });
           console.log(error);
         });
     } catch (err: any) {
