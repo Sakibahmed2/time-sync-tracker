@@ -4,6 +4,7 @@ import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import LoginInSuccess from "../components/LoginInSuccess/LoginInSuccess";
 import TrackingScreen from "../pages/TrackingScreen/TrackingScreen";
+import PrivetRoutes from "./PrivetRoutes";
 
 export const router = createBrowserRouter([
   {
@@ -20,10 +21,18 @@ export const router = createBrowserRouter([
   },
   {
     path: "/login-success",
-    element: <LoginInSuccess />,
+    element: (
+      <PrivetRoutes>
+        <LoginInSuccess />
+      </PrivetRoutes>
+    ),
   },
   {
     path: "/tracking-screen",
-    element: <TrackingScreen />,
+    element: (
+      <PrivetRoutes>
+        <TrackingScreen />
+      </PrivetRoutes>
+    ),
   },
 ]);

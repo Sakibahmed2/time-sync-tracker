@@ -39,9 +39,6 @@ const TrackingScreen = () => {
         <AnalogClock speed={speed} />
         <SpeedSlider speed={speed} setSpeed={setSpeed} />
         <ShareButton speed={speed} />
-        {/* <Box className="mt-4">
-        <Quotes />
-      </Box> */}
       </Stack>
     </Stack>
   );

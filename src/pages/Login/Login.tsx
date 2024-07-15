@@ -29,36 +29,6 @@ const Login = () => {
 
   console.log(user);
 
-  // const handleSubmit = async (value: FieldValues) => {
-  //   const toastId = toast.loading("Loading....");
-  //   try {
-  //     const userInfo = {
-  //       email: value.email,
-  //       password: value.password,
-  //     };
-
-  //     const postRequestOption = {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-type": "application/json",
-  //       },
-  //       body: JSON.stringify(userInfo),
-  //     };
-
-  //     fetch(`http://localhost:5000/api/v1/login`, postRequestOption)
-  //       .then((res) => res.json())
-  //       .then((data) => {
-  //         console.log(data);
-  //         if (data.success) {
-  //           toast.success(data.message, { id: toastId });
-  //           setToLocalStorage("accessToken", data.token);
-  //         }
-  //       });
-  //   } catch (err: any) {
-  //     console.log(err);
-  //   }
-  // };
-
   const handleSubmit = async (value: FieldValues) => {
     const email = value.email;
     const password = value.password;

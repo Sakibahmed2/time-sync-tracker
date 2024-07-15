@@ -40,36 +40,6 @@ const Register = () => {
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
 
-  // const handleSubmit = async (value: FieldValues) => {
-  //   const toastId = toast.loading("Creating user....");
-  //   try {
-  //     const userInfo = {
-  //       name: value.name,
-  //       email: value.email,
-  //       password: value.password,
-  //     };
-
-  //     const postRequestOption = {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-type": "application/json",
-  //       },
-  //       body: JSON.stringify(userInfo),
-  //     };
-
-  //     fetch(`http://localhost:5000/api/v1/register`, postRequestOption)
-  //       .then((res) => res.json())
-  //       .then((data) => {
-  //         if (data.success) {
-  //           toast.success(data.message, { id: toastId });
-  //           navigate("/login");
-  //         }
-  //       });
-  //   } catch (err: any) {
-  //     console.log(err);
-  //   }
-  // };
-
   const handleGoogleSingIn = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
